@@ -10,6 +10,6 @@ namespace SampleAPI.Entities
         {
         }
 
-        public virtual DbSet<Order> Orders { get; set; } = null!;
+        public virtual DbSet<Order> Orders { get; set; } = default!;
     }
 }

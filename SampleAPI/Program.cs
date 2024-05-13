@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using SampleAPI.Entities;
 using SampleAPI.Repositories;
+using SampleAPI.Service;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,6 +10,8 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<SampleApiDbContext>(options => options.UseInMemoryDatabase(databaseName: "SampleDB"));
+builder.Services.AddScoped<IOrderRepository,OrderRepository>();
+builder.Services.AddScoped<IOrderService,OrderService>();
 
 var app = builder.Build();
 

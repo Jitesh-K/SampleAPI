@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using SampleAPI.Entities;
 using SampleAPI.Repositories;
-using SampleAPI.Requests;
+using SampleAPI.Service;
 
 namespace SampleAPI.Controllers
 {
@@ -10,20 +10,60 @@ namespace SampleAPI.Controllers
     public class OrdersController : ControllerBase
     {
         private readonly IOrderRepository _orderRepository;
-        // Add more dependencies as needed.
+        private readonly IOrderService _orderService;
 
-        public OrdersController(IOrderRepository orderRepository)
+        public OrdersController(IOrderRepository orderRepository, IOrderService orderService)
         {
             _orderRepository = orderRepository;
-        }
- 
-        [HttpGet("")] // TODO: Change route, if needed.
-        [ProducesResponseType(StatusCodes.Status200OK)] // TODO: Add all response types
-        public async Task<ActionResult<List<Order>>> GetOrders()
-        {
-            throw new NotImplementedException();
+            _orderService = orderService;
         }
 
-        /// TODO: Add an endpoint to allow users to create an order using <see cref="CreateOrderRequest"/>.
+        [HttpGet("recent")]
+        public async Task<ActionResult<IEnumerable<Order>>> GetRecentOrders()
+        {
+            try
+            {
+                var recentOrders = await _orderRepository.GetRecentOrdersAsync();
+                return Ok(recentOrders);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
+        [HttpPost("submit")]
+        public async Task<ActionResult> SubmitOrder(Order order)
+        {
+            try
+            {
+                if (order == null)
+                    return BadRequest("Order data is missing");
+
+                if (string.IsNullOrEmpty(order.Name) || string.IsNullOrEmpty(order.Description))
+                    return BadRequest("Order name and description are required");
+
+                await _orderService.AddOrderAsync(order);
+                return CreatedAtAction(nameof(GetRecentOrders), new { id = order.Id }, order);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
+        [HttpGet("recent/excludenonbusinessdays")]
+        public async Task<ActionResult<IEnumerable<Order>>> GetRecentOrdersExcludingNonBusinessDays(int days)
+        {
+            try
+            {
+                var orders = await _orderService.GetRecentOrdersExcludingNonBusinessDaysAsync(days);
+                return Ok(orders);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
     }
 }

@@ -9,6 +9,7 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.19" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="6.0.19" />
+    <PackageReference Include="Nager.Date" Version="2.4.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
   </ItemGroup>
 

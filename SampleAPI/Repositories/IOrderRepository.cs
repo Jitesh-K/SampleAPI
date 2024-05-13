@@ -1,14 +1,26 @@
-﻿using SampleAPI.Entities;
-using SampleAPI.Requests;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+using SampleAPI.Entities;
 
 namespace SampleAPI.Repositories
 {
+    /// <summary>
+    /// Interface for interacting with orders.
+    /// </summary>
     public interface IOrderRepository
     {
-        // TODO: Create repository methods.
+        /// <summary>
+        /// Adds a new order asynchronously.
+        /// </summary>
+        /// <param name="order">The order to add.</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
+        Task AddOrderAsync(Order order);
 
-        // Suggestions for repo methods:
-        // public GetRecentOrders();
-        // public AddNewOrder();
+        /// <summary>
+        /// Retrieves recent orders asynchronously.
+        /// </summary>
+        /// <returns>A task representing the asynchronous operation that returns a collection of recent orders.</returns>
+        Task<IEnumerable<Order>> GetRecentOrdersAsync();
+        Task<IEnumerable<Order>> GetRecentOrdersExcludingNonBusinessDaysAsync(DateTime startDate, DateTime adjustedEndDate);
     }
 }
